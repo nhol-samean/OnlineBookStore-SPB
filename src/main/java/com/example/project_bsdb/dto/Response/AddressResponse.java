@@ -1,0 +1,22 @@
+package com.example.project_bsdb.dto.Response;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
+public class AddressResponse {
+
+    private Long id;
+    private String recipientName;
+    private String phone;
+    private String street;
+    private String city;
+    private String province;
+    private String postalCode;
+    private Long userId;
+}

@@ -1,0 +1,116 @@
+package com.example.project_bsdb.controller;
+
+import com.example.project_bsdb.dto.Request.CategoryRequest;
+import com.example.project_bsdb.dto.Response.ApiResponse;
+import com.example.project_bsdb.dto.Response.CategoryResponse;
+import com.example.project_bsdb.service.CategoryService;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
+import jakarta.validation.Valid;
+
+import lombok.RequiredArgsConstructor;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@Tag(name = "Category", description = "Category Management APIs")
+@RestController
+@RequestMapping("/api/categories")
+@RequiredArgsConstructor
+public class CategoryController {
+
+    private final CategoryService categoryService;
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @Operation(summary = "Create a new category")
+    @PostMapping
+    public ResponseEntity<ApiResponse<CategoryResponse>> createCategory(
+            @Valid @RequestBody CategoryRequest request
+    ) {
+
+        CategoryResponse created =
+                categoryService.createCategory(request);
+
+        return new ResponseEntity<>(
+                ApiResponse.success(
+                        "Category created successfully",
+                        created
+                ),
+                HttpStatus.CREATED
+        );
+    }
+
+    @Operation(summary = "Get category by ID")
+    @GetMapping("/{id}")
+    public ResponseEntity<ApiResponse<CategoryResponse>> getCategoryById(
+            @PathVariable Long id
+    ) {
+
+        CategoryResponse category =
+                categoryService.getCategoryById(id);
+
+        return ResponseEntity.ok(
+                ApiResponse.success(
+                        "Category retrieved successfully",
+                        category
+                )
+        );
+    }
+
+    @Operation(summary = "Get all categories")
+    @GetMapping
+    public ResponseEntity<ApiResponse<List<CategoryResponse>>> getAllCategories() {
+
+        List<CategoryResponse> categories =
+                categoryService.getAllCategories();
+
+        return ResponseEntity.ok(
+                ApiResponse.success(
+                        "Categories retrieved successfully",
+                        categories
+                )
+        );
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @Operation(summary = "Update category by ID")
+    @PutMapping("/{id}")
+    public ResponseEntity<ApiResponse<CategoryResponse>> updateCategory(
+            @PathVariable Long id,
+            @Valid @RequestBody CategoryRequest request
+    ) {
+
+        CategoryResponse updated =
+                categoryService.updateCategory(id, request);
+
+        return ResponseEntity.ok(
+                ApiResponse.success(
+                        "Category updated successfully",
+                        updated
+                )
+        );
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @Operation(summary = "Delete category by ID")
+    @DeleteMapping("/{id}")
+    public ResponseEntity<ApiResponse<Void>> deleteCategory(
+            @PathVariable Long id
+    ) {
+
+        categoryService.deleteCategory(id);
+
+        return ResponseEntity.ok(
+                ApiResponse.success(
+                        "Category deleted successfully",
+                        null
+                )
+        );
+    }
+}
